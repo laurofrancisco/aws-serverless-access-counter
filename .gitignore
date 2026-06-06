@@ -1,0 +1,51 @@
+# === Arquivos do Sistema Operacional ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === AWS CDK (Cloud Development Kit) ===
+# Pasta onde o CDK gera os templates do CloudFormation temporários
+cdk.out/
+.cdk.staging/
+
+# === Node.js / JavaScript (Frontend e CDK) ===
+# Nunca envie a pasta node_modules, ela é recriada com 'npm install'
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# === Python (Lambda e ambiente virtual) ===
+# Ignora caches e ambientes virtuais locais do Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+
+# === Configurações de IDEs (Editores de Código) ===
+# Evita conflitos de configuração pessoal entre os membros da equipe
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# === SEGURANÇA: Arquivos de Variáveis de Ambiente e Chaves ===
+# NUNCA remova estas linhas. Elas evitam o vazamento de credenciais.
+.env
+.env.production
+.env.development
+.env.local
+*.pem
+*.key
