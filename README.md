@@ -2,7 +2,7 @@
 
 **Projeto de Conclusão de Curso - EdN BRSAO231**
 
-Este repositório contém a infraestrutura como código (IaC), front-end e lógica de backend para uma aplicação de contagem de acessos 100% Serverless hospedada na nuvem AWS.
+Este repositório contém a infraestrutura como código (IaC), e lógica de backend para uma aplicação de contagem de acessos 100% Serverless hospedada na nuvem AWS.
 
 ---
 
@@ -110,8 +110,8 @@ O projeto foi gerenciado utilizando metodologia ágil (Scrum/Kanban) através do
 
 1. Clone o repositório:
 ```bash
-   git clone https://github.com/laurofrancisco/aws-serverless-access-counter.git
-   cd aws-serverless-access-counter 
+git clone https://github.com/laurofrancisco/aws-serverless-access-counter.git
+cd aws-serverless-access-counter 
 ``` 
 2. Instale as dependências na pasta do cdk:
 
