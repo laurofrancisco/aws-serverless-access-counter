@@ -117,7 +117,7 @@ O projeto foi gerenciado utilizando metodologia ágil (Scrum/Kanban) através do
 
 ```bash
 cd cdk
-   npm install # ou pip install -r requirements.txt
+npm install # ou pip install -r requirements.txt
 ``` 
 
 3. Realize o deploy na sua conta AWS:
