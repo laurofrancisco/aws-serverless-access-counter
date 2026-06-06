@@ -110,7 +110,7 @@ O projeto foi gerenciado utilizando metodologia ágil (Scrum/Kanban) através do
 
 1. Clone o repositório:
 ```bash
-   git clone [https://github.com/laurofrancisco/aws-serverless-access-counter.git](https://github.com/laurofrancisco/aws-serverless-access-counter.git)
+   git clone https://github.com/laurofrancisco/aws-serverless-access-counter.git
    cd aws-serverless-access-counter 
 ``` 
 2. Instale as dependências na pasta do cdk:
