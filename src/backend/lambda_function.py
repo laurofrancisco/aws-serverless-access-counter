@@ -1,7 +1,12 @@
 import json
 import os
 import boto3
+import logging
 from botocore.exceptions import ClientError
+
+# Configuração de logs para o CloudWatch
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 # Inicializa o recurso do DynamoDB fora do handler para reutilizar a conexão (Warm Start)
 dynamodb = boto3.resource('dynamodb')
@@ -11,6 +16,8 @@ TABLE_NAME = os.environ.get('TABLE_NAME', 'ContadorAcessos')
 table = dynamodb.Table(TABLE_NAME)
 
 def lambda_handler(event, context):
+    
+    logger.info("Iniciando processamento de acesso.") # Este log aparecerá no CloudWatch
     """
     Função Lambda responsável por incrementar e retornar o número total 
     de acessos da Landing Page de forma atômica no DynamoDB.
@@ -45,7 +52,7 @@ def lambda_handler(event, context):
     except ClientError as e:
         # Log detalhado que será capturado automaticamente pelo Amazon CloudWatch
         print(f"[ERRO] Falha ao atualizar o DynamoDB: {e.response['Error']['Message']}")
-        
+        logger.error(f"Erro ao acessar DynamoDB: {str(e)}") # Log de erro crítico
         return {
             'statusCode': 500,
             'headers': {
