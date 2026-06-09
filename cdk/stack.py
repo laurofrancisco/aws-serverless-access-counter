@@ -3,6 +3,9 @@ from aws_cdk import (
     Duration,
     aws_dynamodb as dynamodb,
     aws_lambda as _lambda,
+    aws_ec2 as ec2,          # Novo
+    aws_cloudtrail as cloudtrail, # Novo
+    aws_s3 as s3,            # Necessário para logs do CloudTrail
     aws_apigateway as apigw,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
@@ -16,14 +19,18 @@ class ContadorAcessosStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # 1. DynamoDB
+        # 1. Configurar VPC existente (ou criar uma)
+        # Se a VPC já existe, usamos o ID ou lookup
+        vpc = ec2.Vpc.from_lookup(self, "VpcProjeto", vpc_id="vpc-xxxxxx")
+
+        # 2. DynamoDB
         tabela = dynamodb.Table(
             self, "TabelaContador",
             partition_key=dynamodb.Attribute(name="id", type=dynamodb.AttributeType.STRING),
             billing_mode=dynamodb.BillingMode.PAY_PER_REQUEST
         )
 
-        # 2. Lambda com Monitoramento CloudWatch
+        # 3. Lambda com Monitoramento CloudWatch
         funcao_lambda = _lambda.Function(
             self, "LambdaContador",
             runtime=_lambda.Runtime.PYTHON_3_9,
@@ -31,14 +38,24 @@ class ContadorAcessosStack(Stack):
             code=_lambda.Code.from_asset("../src/backend"),
             environment={"TABLE_NAME": tabela.table_name},
             log_retention=logs.RetentionDays.ONE_WEEK # Configuração do CloudWatch Logs
+            vpc=vpc, 
+            vpc_subnets=ec2.SubnetSelection(subnet_type=ec2.SubnetType.PRIVATE_WITH_EGRESS)
         )
 
         tabela.grant_read_write_data(funcao_lambda)
 
-        # 3. API Gateway
+        # 4. CloudTrail para Auditoria
+        bucket_logs = s3.Bucket(self, "CloudTrailLogsBucket")
+        trail = cloudtrail.Trail(
+            self, "CloudTrailAuditoria",
+            storage_bucket=bucket_logs,
+            is_multi_region_trail=True
+        )
+
+        # 5. API Gateway
         api = apigw.LambdaRestApi(self, "ApiContador", handler=funcao_lambda)
 
-        # 4. WAF (Web Application Firewall)
+        # 6. WAF (Web Application Firewall)
         web_acl = wafv2.CfnWebACL(
             self, "WafProtecao",
             default_action={"allow": {}},
@@ -63,7 +80,8 @@ class ContadorAcessosStack(Stack):
                 )
             ]
         )
-        # 5. CloudFront (CDN)
+
+        # 7. CloudFront (CDN)
         distribuicao = cloudfront.Distribution(
             self, "CloudFrontDist",
             default_behavior=cloudfront.BehaviorOptions(
@@ -72,7 +90,8 @@ class ContadorAcessosStack(Stack):
             ),
             web_acl_id=web_acl.attr_arn
         )
-        # 6. Route 53 (DNS)(Exemplo de integração)
+        
+        # 8. Route 53 (DNS)(Exemplo de integração)
         # Para isso funcionar, você precisaria de um domínio (ex: 'meusite.com')
         # já registrado no Route 53 como uma Hosted Zone.
         
